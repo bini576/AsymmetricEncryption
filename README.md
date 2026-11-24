@@ -1,6 +1,6 @@
 <div align="center">
 
-# ðŸ”‘ RSA Asymmetric File Encryption
+# 🔑 RSA Asymmetric File Encryption
 ### Public-Key Cryptosystem for Secure File Encryption, Decryption & Key Management in Java
 
 [![Java Version](https://img.shields.io/badge/Java-11%20%7C%2017%20%7C%2021-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
@@ -12,7 +12,7 @@
 
 ---
 
-## ðŸ“Œ Project Overview
+## 📌 Project Overview
 
 **RSA Asymmetric File Encryption** is an enterprise-ready Java implementation of public-key cryptography. It provides a robust, standalone cryptographic engine capable of generating cryptographically sound asymmetric keypairs (2048-bit / 4096-bit), exporting keys in standardized formats, encrypting sensitive files with public keys, and securely decrypting ciphertext with private keys.
 
@@ -20,7 +20,7 @@ Developed by **Biniyam Ademasu Afework**, this project demonstrates both the the
 
 ---
 
-## âœ¨ Key Features
+## ✨ Key Features
 
 - **Configurable Asymmetric Key Generation:** Generate 2048-bit (standard) or 4096-bit (high security) RSA keypairs backed by Java's `SecureRandom` CSPRNG.
 - **Standards-Compliant Key Export:** Exports Public keys using `X.509` encoding and Private keys using `PKCS#8` encoding.
@@ -31,31 +31,31 @@ Developed by **Biniyam Ademasu Afework**, this project demonstrates both the the
 
 ---
 
-## ðŸ“ Mathematical Foundations of RSA
+## 📐 Mathematical Foundations of RSA
 
 ```
-                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                    â”‚    Generate Primes     â”‚
-                    â”‚       p  and  q        â”‚
-                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                                â”‚
-                                â–¼
+                    ┌────────────────────────┐
+                    │    Generate Primes     │
+                    │       p  and  q        │
+                    └───────────┬────────────┘
+                                │
+                                ▼
                        Compute Modulus:
-                         n = p Ã— q
-                     Totient: Ï†(n) = (p-1)(q-1)
-                                â”‚
-                                â–¼
+                         n = p × q
+                     Totient: φ(n) = (p-1)(q-1)
+                                │
+                                ▼
                         Select Exponent e:
-                    gcd(e, Ï†(n)) = 1,  1 < e < Ï†(n)
-                                â”‚
-                                â–¼
+                    gcd(e, φ(n)) = 1,  1 < e < φ(n)
+                                │
+                                ▼
                     Compute Modular Inverse d:
-                      e Ã— d â‰¡ 1 (mod Ï†(n))
-                                â”‚
-         â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-         â–¼                                             â–¼
+                      e × d ≡ 1 (mod φ(n))
+                                │
+         ┌──────────────────────┴──────────────────────┐
+         ▼                                             ▼
   [ Public Key: (e, n) ]                     [ Private Key: (d, n) ]
-  Encryption: C â‰¡ M^e (mod n)               Decryption: M â‰¡ C^d (mod n)
+  Encryption: C ≡ M^e (mod n)               Decryption: M ≡ C^d (mod n)
 ```
 
 1. **Trapdoor One-Way Function:** RSA security relies on the computational difficulty of the **Integer Factorization Problem**. Multiplying two large prime numbers $p$ and $q$ to produce $n$ is computationally trivial, but deducing $p$ and $q$ from $n$ alone is computationally intractable for sufficiently large keys (e.g., 2048+ bits).
@@ -63,7 +63,7 @@ Developed by **Biniyam Ademasu Afework**, this project demonstrates both the the
 
 ---
 
-## ðŸš€ Installation & Compilation
+## 🚀 Installation & Compilation
 
 ### Prerequisites
 - Java Development Kit (JDK) 11, 17, or 21+
@@ -86,15 +86,15 @@ jar cfe bin/rsa-tool.jar Main -C bin .
 
 ---
 
-## ðŸ’» Usage Examples
+## 💻 Usage Examples
 
 ### 1. Generate a New RSA Key Pair
 ```bash
 java -cp bin Main --generate-keys --keysize 2048
 ```
 *Output files generated:*
-- `publicKey.pem` (Public key â€” share freely with senders)
-- `privateKey.pem` (Private key â€” keep secret and secure)
+- `publicKey.pem` (Public key — share freely with senders)
+- `privateKey.pem` (Private key — keep secret and secure)
 
 ### 2. Encrypt a File
 ```bash
@@ -110,7 +110,7 @@ java -cp bin Main --decrypt --input confidential.pdf.enc --output recovered.pdf 
 
 ---
 
-## ðŸ”’ Security Notes & Best Practices
+## 🔒 Security Notes & Best Practices
 
 | Concern | Assessment & Mitigation |
 |:---|:---|
@@ -121,7 +121,7 @@ java -cp bin Main --decrypt --input confidential.pdf.enc --output recovered.pdf 
 
 ---
 
-## ðŸ“„ License & Author
+## 📄 License & Author
 
 Distributed under the **MIT License**.
 
