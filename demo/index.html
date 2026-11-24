@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>RSA Encryption Tool | Biniyam Ademasu</title>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#070a12;color:#e2e8f0;min-height:100vh}
+:root{--cyan:#00d4ff;--green:#00ff88;--red:#ff3b3b;--purple:#a855f7;--amber:#f59e0b;--bg2:#0d1117;--bg3:#0f1923;--border:#1e3a5f;--muted:#64748b}
+.header{background:linear-gradient(135deg,#0d1117,#0a1628);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between}
+.header-logo{font-family:'Fira Code';font-size:1.1rem;color:var(--purple);font-weight:700}
+.header-badge{background:rgba(168,85,247,.12);border:1px solid rgba(168,85,247,.4);color:var(--purple);padding:4px 14px;border-radius:20px;font-size:.75rem;font-family:'Fira Code'}
+.header-links a{color:var(--muted);text-decoration:none;font-size:.85rem;margin-left:16px;transition:color .2s}
+.header-links a:hover{color:var(--purple)}
+.container{max-width:1100px;margin:0 auto;padding:40px 24px}
+h1{font-size:1.9rem;font-weight:800;color:#fff;margin-bottom:6px}
+.subtitle{color:var(--muted);margin-bottom:36px;font-size:.95rem}
+.tabs{display:flex;gap:4px;margin-bottom:28px;border-bottom:1px solid var(--border)}
+.tab-btn{padding:10px 22px;border:none;background:transparent;color:var(--muted);font-size:.9rem;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Inter'}
+.tab-btn.active{color:var(--purple);border-bottom-color:var(--purple)}
+.tab-btn:hover:not(.active){color:#e2e8f0}
+.tab-pane{display:none}.tab-pane.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px}
+.card-title{color:var(--purple);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+label{display:block;font-size:.85rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+input[type=text],textarea,select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:#e2e8f0;font-family:'Fira Code';font-size:.85rem;resize:vertical;transition:border-color .2s;margin-bottom:14px}
+input[type=text]:focus,textarea:focus,select:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(168,85,247,.08)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:680px){.two-col{grid-template-columns:1fr}}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 24px;border-radius:8px;border:none;font-weight:700;font-size:.9rem;cursor:pointer;transition:all .25s;font-family:'Inter';text-decoration:none}
+.btn-purple{background:linear-gradient(135deg,var(--purple),#6c3cf0);color:#fff}
+.btn-purple:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(168,85,247,.35)}
+.btn-green{background:linear-gradient(135deg,var(--green),#00a855);color:#000}
+.btn-green:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,255,136,.3)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-outline:hover{border-color:var(--purple);color:var(--purple)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+.output-box{background:#020510;border:1px solid var(--border);border-radius:8px;padding:16px;min-height:80px;font-family:'Fira Code';font-size:.78rem;color:#e2e8f0;word-break:break-all;white-space:pre-wrap;position:relative;line-height:1.6;max-height:220px;overflow-y:auto}
+.output-box.ok{color:var(--green);border-color:rgba(0,255,136,.3)}
+.output-box.crypt{color:var(--purple);border-color:rgba(168,85,247,.3)}
+.output-box.err{color:var(--red);border-color:rgba(255,59,59,.3)}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg2);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:6px;font-size:.72rem;cursor:pointer;transition:all .2s;z-index:1}
+.copy-btn:hover{border-color:var(--purple);color:var(--purple)}
+.info-box{background:rgba(168,85,247,.05);border:1px solid rgba(168,85,247,.2);border-radius:10px;padding:16px 20px;margin-bottom:16px;font-size:.88rem;color:#94a3b8;line-height:1.7}
+.info-box strong{color:var(--purple)}
+.warn-box{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.3);border-radius:10px;padding:14px 18px;margin-bottom:16px;font-size:.85rem;color:#94a3b8;line-height:1.6}
+.warn-box i{color:var(--amber);margin-right:6px}
+.key-box{background:#020510;border:1px solid rgba(168,85,247,.3);border-radius:8px;padding:14px;font-family:'Fira Code';font-size:.72rem;color:var(--purple);word-break:break-all;max-height:180px;overflow-y:auto;white-space:pre-wrap;position:relative}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(168,85,247,.3);border-top-color:var(--purple);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:14px 0}
+.stat-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center}
+.stat-val{font-size:1.3rem;font-weight:800;color:var(--purple);font-family:'Fira Code'}
+.stat-lbl{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.steps-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.step-box{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center;transition:all .3s}
+.step-box:hover{border-color:var(--purple);transform:translateY(-2px)}
+.step-num{font-size:1.5rem;margin-bottom:8px}
+.step-title{color:var(--purple);font-size:.78rem;font-weight:700;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.step-desc{color:var(--muted);font-size:.75rem;line-height:1.5}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.about-grid{grid-template-columns:1fr}}
+.about-card{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:18px}
+.about-card h3{color:var(--purple);font-size:.85rem;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.about-card p{color:var(--muted);font-size:.82rem;line-height:1.6}
+.about-card code{background:rgba(168,85,247,.1);color:var(--purple);padding:1px 6px;border-radius:4px;font-size:.8rem}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-logo">🔐 RSA Asymmetric Encryption Tool</span>
+  <span class="header-badge">● LIVE DEMO</span>
+  <div class="header-links">
+    <a href="https://github.com/bini576/AsymmetricEncryption" target="_blank"><i class="fab fa-github"></i> Source</a>
+    <a href="https://bini576.github.io" target="_blank"><i class="fas fa-globe"></i> Portfolio</a>
+  </div>
+</div>
+
+<div class="container">
+  <h1>🔐 RSA Asymmetric Encryption</h1>
+  <p class="subtitle">Interactive browser demo of RSA-2048 public-key cryptography — based on the Java project by <strong style="color:var(--purple)">Biniyam Ademasu Afework</strong></p>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="openTab('keygen')">🗝️ Key Generator</button>
+    <button class="tab-btn" onclick="openTab('encrypt')">🔒 Encrypt</button>
+    <button class="tab-btn" onclick="openTab('decrypt')">🔓 Decrypt</button>
+    <button class="tab-btn" onclick="openTab('how-it-works')">📚 How RSA Works</button>
+    <button class="tab-btn" onclick="openTab('compare')">⚖️ RSA vs AES</button>
+    <button class="tab-btn" onclick="openTab('about')">👨‍💻 About</button>
+  </div>
+
+  <!-- KEY GEN TAB -->
+  <div id="tab-keygen" class="tab-pane active">
+    <div class="info-box">
+      <strong>RSA Key Pair Generation:</strong> RSA uses a mathematically linked key pair — a <strong>Public Key</strong> for encryption (share freely) and a <strong>Private Key</strong> for decryption (keep secret). Keys are generated fresh each session in your browser.
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-key"></i> Generate RSA Key Pair</div>
+      <label>Key Size</label>
+      <select id="key-size" style="margin-bottom:16px">
+        <option value="1024">RSA-1024 (Fast, less secure — demo only)</option>
+        <option value="2048" selected>RSA-2048 (Standard — recommended)</option>
+        <option value="4096">RSA-4096 (Maximum — may take a few seconds)</option>
+      </select>
+      <button class="btn btn-purple" id="keygen-btn" onclick="generateKeys()">
+        <i class="fas fa-cogs"></i> Generate Key Pair
+      </button>
+      <div id="keygen-status" style="margin-top:16px;color:var(--muted);font-size:.88rem;display:none">
+        <span class="spinner"></span> Generating RSA keys... this may take a moment for larger sizes.
+      </div>
+      <div id="keys-output" style="display:none;margin-top:20px">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-val" id="stat-keysize">2048</div><div class="stat-lbl">Key Bits</div></div>
+          <div class="stat-card"><div class="stat-val" id="stat-algo">RSA</div><div class="stat-lbl">Algorithm</div></div>
+          <div class="stat-card"><div class="stat-val">OAEP</div><div class="stat-lbl">Padding</div></div>
+          <div class="stat-card"><div class="stat-val">SHA-256</div><div class="stat-lbl">Hash</div></div>
+        </div>
+        <div class="two-col" style="margin-top:4px">
+          <div>
+            <label>🌐 Public Key (share openly)</label>
+            <div class="key-box" id="public-key-box">
+              <button class="copy-btn" onclick="copyEl('public-key-box')"><i class="fas fa-copy"></i> Copy</button>
+              <span id="public-key-text"></span>
+            </div>
+          </div>
+          <div>
+            <label>🔒 Private Key (keep secret!)</label>
+            <div class="key-box" id="private-key-box" style="border-color:rgba(255,59,59,.3);color:#ff8080">
+              <button class="copy-btn" onclick="copyEl('private-key-box')"><i class="fas fa-copy"></i> Copy</button>
+              <span id="private-key-text"></span>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:16px">
+          <button class="btn btn-outline" onclick="document.querySelector('[onclick=\"openTab(\'encrypt\')\"]').click();openTab('encrypt')">Use These Keys → Encrypt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCRYPT TAB -->
+  <div id="tab-encrypt" class="tab-pane">
+    <div class="warn-box"><i class="fas fa-info-circle"></i> Generate keys first on the Key Generator tab, or paste a public key below.</div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-lock"></i> Encrypt Message with RSA Public Key</div>
+      <div class="warn-box" style="margin-bottom:12px"><i class="fas fa-exclamation-triangle"></i> RSA-2048 can only encrypt up to ~214 bytes at a time. For larger data, RSA is used to encrypt an AES key (hybrid encryption).</div>
+      <label>Message to Encrypt (max ~200 chars for RSA-2048)</label>
+      <textarea id="enc-plaintext" rows="3" placeholder="Type your secret message here..."></textarea>
+      <label>Public Key (PEM format)</label>
+      <textarea id="enc-pubkey" rows="6" placeholder="Paste RSA public key here (PEM format)&#10;— or generate one on the Key Generator tab"></textarea>
+      <button class="btn btn-purple" onclick="doRsaEncrypt()"><i class="fas fa-lock"></i> Encrypt with Public Key</button>
+      <div style="margin-top:16px">
+        <label>Encrypted Output (Base64)</label>
+        <div class="output-box crypt" id="enc-output" style="min-height:100px">
+          <button class="copy-btn" onclick="copyEl('enc-output')"><i class="fas fa-copy"></i> Copy</button>
+          <span id="enc-output-text" style="color:var(--muted);font-style:italic">Encrypted ciphertext will appear here...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECRYPT TAB -->
+  <div id="tab-decrypt" class="tab-pane">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-unlock"></i> Decrypt with RSA Private Key</div>
+      <label>Ciphertext (Base64)</label>
+      <textarea id="dec-ciphertext" rows="4" placeholder="Paste the encrypted Base64 ciphertext here..."></textarea>
+      <label>Private Key (PEM format)</label>
+      <textarea id="dec-privkey" rows="6" placeholder="Paste your RSA private key here (PEM format)&#10;— must match the public key used to encrypt"></textarea>
+      <button class="btn btn-green" onclick="doRsaDecrypt()"><i class="fas fa-unlock"></i> Decrypt with Private Key</button>
+      <div style="margin-top:16px">
+        <label>Decrypted Message</label>
+        <div class="output-box" id="dec-output" style="min-height:80px;color:var(--muted);font-style:italic">Decrypted message will appear here...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS TAB -->
+  <div id="tab-how-it-works" class="tab-pane">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-book-open"></i> How RSA Works</div>
+      <div class="info-box">
+        RSA (Rivest–Shamir–Adleman) is an asymmetric cryptographic algorithm based on the mathematical difficulty of <strong>factoring the product of two large prime numbers</strong>. It uses a <strong>key pair</strong>: anything encrypted with the public key can only be decrypted with the corresponding private key.
+      </div>
+      <div class="steps-wrap" style="margin-bottom:24px">
+        <div class="step-box"><div class="step-num">🔢</div><div class="step-title">1. Choose Primes</div><div class="step-desc">Pick two large secret primes p and q. Compute n = p × q (the modulus)</div></div>
+        <div class="step-box"><div class="step-num">📐</div><div class="step-title">2. Compute φ(n)</div><div class="step-desc">Euler's totient: φ(n) = (p-1)(q-1). This stays secret.</div></div>
+        <div class="step-box"><div class="step-num">🌐</div><div class="step-title">3. Public Key</div><div class="step-desc">Choose e (usually 65537). Public key = (e, n). Share with everyone!</div></div>
+        <div class="step-box"><div class="step-num">🔒</div><div class="step-title">4. Private Key</div><div class="step-desc">Compute d = e⁻¹ mod φ(n). Private key = (d, n). Keep secret!</div></div>
+        <div class="step-box"><div class="step-num">🔐</div><div class="step-title">5. Encrypt</div><div class="step-desc">Ciphertext C = M^e mod n — using the public key</div></div>
+        <div class="step-box"><div class="step-num">🔓</div><div class="step-title">6. Decrypt</div><div class="step-desc">Message M = C^d mod n — using the private key</div></div>
+      </div>
+      <div class="info-box" style="margin-top:0">
+        <strong>Why is it secure?</strong> Breaking RSA requires factoring n back into p and q. For 2048-bit keys, this would take longer than the age of the universe with current computers. Quantum computers could theoretically break RSA, which is why post-quantum cryptography is an active research area.
+      </div>
+    </div>
+  </div>
+
+  <!-- RSA vs AES TAB -->
+  <div id="tab-compare" class="tab-pane">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-balance-scale"></i> RSA (Asymmetric) vs AES (Symmetric)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+        <thead><tr>
+          <th style="padding:12px;text-align:left;border-bottom:1px solid var(--border);color:var(--muted)">Feature</th>
+          <th style="padding:12px;text-align:left;border-bottom:1px solid var(--border);color:var(--purple)">RSA (Asymmetric)</th>
+          <th style="padding:12px;text-align:left;border-bottom:1px solid var(--border);color:var(--cyan)">AES (Symmetric)</th>
+        </tr></thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 12px;color:var(--muted)">Keys</td><td style="padding:10px 12px;color:#e2e8f0">Public + Private pair</td><td style="padding:10px 12px;color:#e2e8f0">Single shared secret key</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 12px;color:var(--muted)">Speed</td><td style="padding:10px 12px;color:var(--red)">⚡ Slow (1000x slower)</td><td style="padding:10px 12px;color:var(--green)">⚡⚡⚡ Very fast</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 12px;color:var(--muted)">Data Size</td><td style="padding:10px 12px;color:var(--red)">Small data only (~200 bytes)</td><td style="padding:10px 12px;color:var(--green)">Any size</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 12px;color:var(--muted)">Key Exchange</td><td style="padding:10px 12px;color:var(--green)">Safe over public channel</td><td style="padding:10px 12px;color:var(--red)">Requires secure channel</td></tr>
+          <tr style="border-bottom:1px solid var(--border)"><td style="padding:10px 12px;color:var(--muted)">Use Case</td><td style="padding:10px 12px;color:#e2e8f0">Key exchange, signatures, auth</td><td style="padding:10px 12px;color:#e2e8f0">Bulk data encryption</td></tr>
+          <tr><td style="padding:10px 12px;color:var(--muted)">In TLS/HTTPS</td><td style="padding:10px 12px;color:#e2e8f0">Exchanges the AES key</td><td style="padding:10px 12px;color:#e2e8f0">Encrypts actual traffic</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box" style="margin-top:20px">
+        <strong>Hybrid Encryption (Real World):</strong> Modern systems (HTTPS, PGP, SSH) combine both: RSA encrypts a random AES session key, then AES encrypts the actual data. This gives you the key-exchange safety of RSA with the speed of AES.
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT TAB -->
+  <div id="tab-about" class="tab-pane">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-user-shield"></i> About This Project</div>
+      <div class="info-box">
+        The original <strong>Asymmetric Encryption project</strong> is a Java CLI application that generates a 2048-bit RSA key pair,
+        encrypts files using the public key (<code>RSA/ECB/PKCS1Padding</code>), saves the private key to disk, and
+        decrypts files using the stored private key. This web demo recreates the same functionality using the
+        browser's native <strong>Web Crypto API</strong> (RSASSA-PKCS1-v1_5 / RSA-OAEP).
+      </div>
+      <div class="about-grid">
+        <div class="about-card"><h3>☕ Java Original</h3><p>Uses <code>KeyPairGenerator</code> (RSA-2048), <code>Cipher</code> (RSA/ECB), reads/writes raw bytes with <code>Files.readAllBytes</code>. Keys stored as PKCS8 DER files.</p></div>
+        <div class="about-card"><h3>🌐 Web Demo</h3><p>Uses <code>crypto.subtle.generateKey</code> (RSA-OAEP-2048/4096), <code>crypto.subtle.encrypt/decrypt</code>. Keys exported as PEM (SPKI/PKCS8). Runs entirely in-browser.</p></div>
+        <div class="about-card"><h3>📚 Skills Shown</h3><p>Asymmetric cryptography, RSA key generation, public-key encryption, PKCS#8 key format, Java security APIs, cryptographic file I/O, CLI application design.</p></div>
+        <div class="about-card"><h3>🔬 Use Cases</h3><p>Secure key exchange, digital signatures, certificate authorities, encrypted email (PGP), SSH authentication, HTTPS handshake (TLS).</p></div>
+      </div>
+      <div style="margin-top:20px;text-align:center">
+        <a href="https://github.com/bini576/AsymmetricEncryption" target="_blank" class="btn btn-purple"><i class="fab fa-github"></i> View Java Source</a>
+        <a href="https://bini576.github.io" target="_blank" class="btn btn-outline" style="margin-left:10px"><i class="fas fa-globe"></i> Portfolio</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let generatedKeys = null;
+
+function openTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+async function generateKeys() {
+  const size = parseInt(document.getElementById('key-size').value);
+  document.getElementById('keygen-status').style.display = 'block';
+  document.getElementById('keys-output').style.display = 'none';
+  document.getElementById('keygen-btn').disabled = true;
+  try {
+    const keyPair = await crypto.subtle.generateKey(
+      { name:'RSA-OAEP', modulusLength:size, publicExponent:new Uint8Array([1,0,1]), hash:'SHA-256' },
+      true, ['encrypt','decrypt']
+    );
+    generatedKeys = keyPair;
+
+    const pubDer = await crypto.subtle.exportKey('spki', keyPair.publicKey);
+    const privDer = await crypto.subtle.exportKey('pkcs8', keyPair.privateKey);
+
+    const pubPem = `-----BEGIN PUBLIC KEY-----\n${chunk(btoa(ab2str(pubDer)),64)}\n-----END PUBLIC KEY-----`;
+    const privPem = `-----BEGIN PRIVATE KEY-----\n${chunk(btoa(ab2str(privDer)),64)}\n-----END PRIVATE KEY-----`;
+
+    document.getElementById('public-key-text').textContent = pubPem;
+    document.getElementById('private-key-text').textContent = privPem;
+    document.getElementById('enc-pubkey').value = pubPem;
+    document.getElementById('dec-privkey').value = privPem;
+    document.getElementById('stat-keysize').textContent = size;
+    document.getElementById('keys-output').style.display = 'block';
+    document.getElementById('keygen-status').style.display = 'none';
+  } catch(e) {
+    alert('Key generation failed: ' + e.message);
+    document.getElementById('keygen-status').style.display = 'none';
+  }
+  document.getElementById('keygen-btn').disabled = false;
+}
+
+function ab2str(buf) { return String.fromCharCode(...new Uint8Array(buf)); }
+function chunk(str, n) { return str.match(new RegExp(`.{1,${n}}`,'g')).join('\n'); }
+
+function pemToBuf(pem) {
+  const b64 = pem.replace(/-----[^-]+-----/g,'').replace(/\s/g,'');
+  const bin = atob(b64);
+  const buf = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+  return buf.buffer;
+}
+
+async function doRsaEncrypt() {
+  const pt = document.getElementById('enc-plaintext').value;
+  const pubPem = document.getElementById('enc-pubkey').value.trim();
+  const outEl = document.getElementById('enc-output-text');
+  const boxEl = document.getElementById('enc-output');
+  if(!pt || !pubPem) { outEl.textContent='Please fill in both fields'; boxEl.className='output-box err'; return; }
+  try {
+    const pubKey = await crypto.subtle.importKey('spki', pemToBuf(pubPem), {name:'RSA-OAEP',hash:'SHA-256'}, false, ['encrypt']);
+    const enc = await crypto.subtle.encrypt({name:'RSA-OAEP'}, pubKey, new TextEncoder().encode(pt));
+    const b64 = btoa(ab2str(enc));
+    outEl.textContent = b64;
+    boxEl.className = 'output-box crypt';
+    document.getElementById('dec-ciphertext').value = b64;
+  } catch(e) {
+    outEl.textContent = '❌ Encryption failed: ' + e.message + '\n(Message may be too long for RSA — max ~200 bytes for RSA-2048)';
+    boxEl.className = 'output-box err';
+  }
+}
+
+async function doRsaDecrypt() {
+  const ct = document.getElementById('dec-ciphertext').value.trim();
+  const privPem = document.getElementById('dec-privkey').value.trim();
+  const outEl = document.getElementById('dec-output');
+  if(!ct || !privPem) { outEl.textContent='Please fill in both fields'; outEl.className='output-box err'; return; }
+  try {
+    const privKey = await crypto.subtle.importKey('pkcs8', pemToBuf(privPem), {name:'RSA-OAEP',hash:'SHA-256'}, false, ['decrypt']);
+    const ctBytes = Uint8Array.from(atob(ct), c => c.charCodeAt(0));
+    const pt = await crypto.subtle.decrypt({name:'RSA-OAEP'}, privKey, ctBytes);
+    outEl.textContent = new TextDecoder().decode(pt);
+    outEl.className = 'output-box ok';
+  } catch(e) {
+    outEl.textContent = '❌ Decryption failed: ' + e.message + '\n(Wrong private key or corrupted ciphertext)';
+    outEl.className = 'output-box err';
+  }
+}
+
+function copyEl(id) {
+  const text = document.getElementById(id).querySelector('span')?.textContent || document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text);
+}
+</script>
+</body>
+</html>
